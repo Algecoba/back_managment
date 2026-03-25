@@ -1,5 +1,5 @@
 package com.unisimon.gestor.flujos.enums;
 
-public class CosigoEstado {
+public class CodigoEstado {
 
 }

@@ -46,3 +46,6 @@ logs/
 
 ### Docker — ignorar datos persistidos localmente
 docker/data/
+
+### Perfiles con credenciales locales
+application-dev.properties
