@@ -1,6 +1,7 @@
 package com.unisimon.gestor.config;
 
 import com.unisimon.gestor.autenticacion.security.FiltroJwt;
+import com.unisimon.gestor.autenticacion.security.UsuarioDetallesServicio;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,20 +18,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import com.unisimon.gestor.autenticacion.security.UsuarioDetallesServicio;
 
 /**
  * Configuración central de Spring Security con JWT activo.
  *
- * La cadena de filtros registra FiltroJwt antes del filtro estándar
- * de autenticación de Spring, de modo que cada request es validado
- * por el token antes de llegar a los controladores.
- *
- * Rutas públicas: solo /api/v1/auth/** (login)
- * Rutas protegidas: todo lo demás requiere JWT válido
- *
- * NOTA: @PreAuthorize en controladores y servicios permite control
- * fino de acceso por rol, además de la autenticación general aquí.
+ * Rutas públicas: /api/v1/auth/** y /actuator/health
+ * Rutas protegidas: todo lo demás requiere JWT válido en header Authorization.
  */
 @Configuration
 @EnableWebSecurity
@@ -41,7 +34,6 @@ public class SeguridadConfig {
     private final FiltroJwt filtroJwt;
     private final UsuarioDetallesServicio usuarioDetallesServicio;
 
-    @Bean
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http,
             AuthenticationProvider authProvider) throws Exception {
@@ -59,10 +51,6 @@ public class SeguridadConfig {
         return http.build();
     }
 
-    /**
-     * Proveedor de autenticación que conecta Spring Security
-     * con nuestro UsuarioDetallesServicio y el PasswordEncoder.
-     */
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -71,11 +59,6 @@ public class SeguridadConfig {
         return provider;
     }
 
-    /**
-     * AuthenticationManager expuesto como Bean para que
-     * AutenticacionServicio pueda disparar la autenticación
-     * programáticamente durante el login.
-     */
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config) throws Exception {
