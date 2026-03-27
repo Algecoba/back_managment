@@ -20,6 +20,10 @@ public class ExcepcionNegocio extends RuntimeException {
     // El status HTTP que debe retornar esta excepción al cliente
     private final HttpStatus httpStatus;
 
+    public HttpStatus getHttpStatus() {
+        return httpStatus;
+    }
+
     public ExcepcionNegocio(String mensaje, HttpStatus httpStatus) {
         super(mensaje);
         this.httpStatus = httpStatus;

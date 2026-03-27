@@ -1,7 +1,13 @@
 package com.unisimon.gestor.config;
 
+import com.unisimon.gestor.autenticacion.security.FiltroJwt;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -10,48 +16,72 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import com.unisimon.gestor.autenticacion.security.UsuarioDetallesServicio;
 
 /**
- * Configuración central de Spring Security.
+ * Configuración central de Spring Security con JWT activo.
  *
- * ESTADO ACTUAL: seguridad desactivada intencionalmente durante
- * el desarrollo inicial. Todos los endpoints son públicos.
+ * La cadena de filtros registra FiltroJwt antes del filtro estándar
+ * de autenticación de Spring, de modo que cada request es validado
+ * por el token antes de llegar a los controladores.
  *
- * CUANDO SE ACTIVE JWT: esta clase recibirá el FiltroJwt como
- * parámetro y lo registrará antes del filtro de autenticación
- * estándar de Spring. Los endpoints protegidos se configuran aquí.
+ * Rutas públicas: solo /api/v1/auth/** (login)
+ * Rutas protegidas: todo lo demás requiere JWT válido
  *
- * NO eliminar esta clase aunque la seguridad esté desactivada:
- * Spring Security requiere al menos un SecurityFilterChain definido
- * para no aplicar su configuración por defecto (que bloquea todo).
+ * NOTA: @PreAuthorize en controladores y servicios permite control
+ * fino de acceso por rol, además de la autenticación general aquí.
  */
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity // Permite usar @PreAuthorize en controladores y servicios
+@EnableMethodSecurity
+@RequiredArgsConstructor
 public class SeguridadConfig {
 
+    private final FiltroJwt filtroJwt;
+    private final UsuarioDetallesServicio usuarioDetallesServicio;
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http,
+            AuthenticationProvider authProvider) throws Exception {
         http
-                // Desactivar CSRF: no aplica en APIs REST stateless con JWT
                 .csrf(AbstractHttpConfigurer::disable)
-
-                // Sin sesiones HTTP: cada request se autentica con su propio JWT
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
-                // TODO: cuando se active JWT, aquí se restringe por roles y rutas.
-                // Por ahora todos los endpoints son públicos para desarrollo.
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+                .authenticationProvider(authProvider)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/actuator/health").permitAll()
+                        .anyRequest().authenticated())
+                .addFilterBefore(filtroJwt,
+                        UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     /**
-     * Encoder de contraseñas con BCrypt.
-     * Se registra como Bean para poder inyectarlo en AutenticacionServicio
-     * cuando implementemos el login. BCrypt es el estándar de la industria:
-     * aplica salt automático y es resistente a ataques de fuerza bruta.
+     * Proveedor de autenticación que conecta Spring Security
+     * con nuestro UsuarioDetallesServicio y el PasswordEncoder.
      */
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(usuarioDetallesServicio);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
+    }
+
+    /**
+     * AuthenticationManager expuesto como Bean para que
+     * AutenticacionServicio pueda disparar la autenticación
+     * programáticamente durante el login.
+     */
+    @Bean
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
