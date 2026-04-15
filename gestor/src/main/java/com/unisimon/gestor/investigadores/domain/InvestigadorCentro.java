@@ -8,17 +8,17 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 /**
- * Vinculación histórica de un investigador a un grupo de investigación.
+ * Vinculación histórica de un investigador a un centro de investigación.
  * Misma lógica de vigencia que InvestigadorPrograma.
  */
 @Getter
 @Setter
 @Entity
-@Table(name = "investigador_grupo")
-public class InvestigadorGrupo {
+@Table(name = "investigador_centro")
+public class InvestigadorCentro {
 
     @EmbeddedId
-    private InvestigadorGrupoId id;
+    private InvestigadorCentroId id;
 
     @Column(name = "es_principal", nullable = false)
     private boolean esPrincipal = false;

@@ -10,7 +10,7 @@ Similitud, Traducción, APC y Reporte de Producción Científica.
 
 | Capa | Tecnología |
 |------|------------|
-| Backend | Java 21 · Spring Boot 3.3 · Spring Security · JWT |
+| Backend | Java 17 · Spring Boot 3.3.5 · Spring Security · JWT |
 | Base de datos | Microsoft SQL Server 2022 |
 | Contenedores | Docker · Docker Compose |
 | Control de versiones | Git · GitHub |
