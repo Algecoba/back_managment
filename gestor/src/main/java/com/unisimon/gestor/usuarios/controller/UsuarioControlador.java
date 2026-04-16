@@ -11,8 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 /**
- * Controlador de usuarios.
- * Delgado por diseño: recibe, delega al servicio y retorna.
+ * Controlador de usuarios. Todos los IDs expuestos son UUID.
  */
 @RestController
 @RequestMapping("/api/v1/usuarios")
@@ -21,31 +20,19 @@ public class UsuarioControlador {
 
     private final UsuarioServicio usuarioServicio;
 
-    /**
-     * GET /api/v1/usuarios/me
-     *
-     * Retorna el perfil del usuario autenticado.
-     * Cualquier usuario autenticado puede acceder a su propio perfil.
-     */
     @GetMapping("/me")
     public ResponseEntity<RespuestaDto<UsuarioDto>> obtenerPerfilActual() {
         return ResponseEntity.ok(
-                RespuestaDto.exito("Perfil obtenido correctamente",
-                        usuarioServicio.obtenerPerfilActual()));
+            RespuestaDto.exito("Perfil obtenido correctamente",
+                usuarioServicio.obtenerPerfilActual()));
     }
 
-    /**
-     * GET /api/v1/usuarios/{id}
-     *
-     * Busca un usuario por UUID.
-     * Restringido a administradores con @PreAuthorize.
-     */
-    @GetMapping("/{id}")
+    @GetMapping("/{uuid}")
     @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'PROF_PUBLICACIONES')")
-    public ResponseEntity<RespuestaDto<UsuarioDto>> buscarPorId(
-            @PathVariable UUID id) {
+    public ResponseEntity<RespuestaDto<UsuarioDto>> buscarPorUuid(
+            @PathVariable UUID uuid) {
         return ResponseEntity.ok(
-                RespuestaDto.exito("Usuario encontrado",
-                        usuarioServicio.buscarPorId(id)));
+            RespuestaDto.exito("Usuario encontrado",
+                usuarioServicio.buscarPorUuid(uuid)));
     }
 }

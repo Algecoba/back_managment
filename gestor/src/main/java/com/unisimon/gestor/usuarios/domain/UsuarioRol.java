@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 /**
  * Tabla: usuario_rol
  * Relacion N:M entre usuario y rol.
- * Registra quien realizo la asignacion y cuando.
  */
 @Getter
 @Setter
@@ -33,7 +32,6 @@ public class UsuarioRol {
     @Column(name = "fecha_asignacion", nullable = false)
     private LocalDateTime fechaAsignacion;
 
-    // Correo del administrador que realizo la asignacion
     @Column(name = "usuario_asignacion", nullable = false, length = 100)
     private String usuarioAsignacion;
 

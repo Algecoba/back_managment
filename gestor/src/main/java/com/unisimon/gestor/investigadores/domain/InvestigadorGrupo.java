@@ -8,7 +8,6 @@ import java.time.LocalDate;
 
 /**
  * Tabla: investigador_grupo
- * Vinculacion historica de un investigador a un grupo de investigacion.
  */
 @Getter
 @Setter

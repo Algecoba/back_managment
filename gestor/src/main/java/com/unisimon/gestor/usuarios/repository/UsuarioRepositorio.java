@@ -22,16 +22,12 @@ public interface UsuarioRepositorio extends JpaRepository<Usuario, Long> {
 
     boolean existsByNumeroDocumento(String numeroDocumento);
 
-    /**
-     * Busca usuario por correo cargando sus roles en la misma query.
-     * Evita el problema N+1 al cargar la coleccion de roles.
-     */
     @Query("""
-            SELECT u FROM Usuario u
-            LEFT JOIN FETCH u.usuarioRoles ur
-            LEFT JOIN FETCH ur.rol
-            WHERE u.correo = :correo
-            AND u.esActivo = true
-            """)
+        SELECT u FROM Usuario u
+        LEFT JOIN FETCH u.usuarioRoles ur
+        LEFT JOIN FETCH ur.rol
+        WHERE u.correo = :correo
+        AND u.esActivo = true
+        """)
     Optional<Usuario> findByCorreoConRoles(@Param("correo") String correo);
 }

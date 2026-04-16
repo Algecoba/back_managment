@@ -6,15 +6,14 @@ import lombok.Getter;
 
 /**
  * DTO de entrada para el endpoint de login.
- * Las validaciones rechazan requests malformados antes de llegar al servicio.
  */
 @Getter
 public class SolicitudLoginDto {
 
     @NotBlank(message = "El correo es obligatorio")
-    @Email(message = "Debe ser un correo electrónico válido")
+    @Email(message = "Debe ser un correo electronico valido")
     private String correo;
 
-    @NotBlank(message = "La contraseña es obligatoria")
+    @NotBlank(message = "La contrasena es obligatoria")
     private String contrasena;
 }

@@ -9,10 +9,6 @@ import lombok.Setter;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-/**
- * Clave compuesta: usuario_id + programa_id + fecha_inicio
- * Permite multiples vigencias del mismo investigador en el mismo programa.
- */
 @Getter
 @Setter
 @Embeddable

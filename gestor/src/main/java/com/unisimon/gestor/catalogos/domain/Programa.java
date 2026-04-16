@@ -9,8 +9,7 @@ import java.util.UUID;
 
 /**
  * Tabla: programa
- * Programa academico institucional.
- * Pertenece a una facultad.
+ * Programa academico institucional. Pertenece a una facultad.
  */
 @Getter
 @Setter
@@ -23,7 +22,8 @@ public class Programa extends EntidadAuditable {
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 
-    @Column(name = "uuid", nullable = false, unique = true, updatable = false, columnDefinition = "UNIQUEIDENTIFIER DEFAULT NEWID()")
+    @Column(name = "uuid", nullable = false, unique = true,
+            updatable = false, columnDefinition = "UNIQUEIDENTIFIER DEFAULT NEWID()")
     private UUID uuid;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -38,8 +38,6 @@ public class Programa extends EntidadAuditable {
 
     @PrePersist
     protected void antesDeGuardar() {
-        if (uuid == null) {
-            uuid = UUID.randomUUID();
-        }
+        if (uuid == null) uuid = UUID.randomUUID();
     }
 }

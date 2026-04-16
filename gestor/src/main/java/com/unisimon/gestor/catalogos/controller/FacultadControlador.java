@@ -19,24 +19,21 @@ public class FacultadControlador {
 
     @GetMapping
     public ResponseEntity<RespuestaDto<List<FacultadDto>>> listar() {
-        return ResponseEntity.ok(
-                RespuestaDto.exito("Facultades obtenidas correctamente",
-                        facultadServicio.listarActivas()));
+        return ResponseEntity.ok(RespuestaDto.exito(
+            "Facultades obtenidas correctamente", facultadServicio.listarActivas()));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<RespuestaDto<FacultadDto>> buscarPorId(
-            @PathVariable UUID id) {
-        return ResponseEntity.ok(
-                RespuestaDto.exito("Facultad encontrada",
-                        facultadServicio.buscarPorId(id)));
+    @GetMapping("/{uuid}")
+    public ResponseEntity<RespuestaDto<FacultadDto>> buscarPorUuid(@PathVariable UUID uuid) {
+        return ResponseEntity.ok(RespuestaDto.exito(
+            "Facultad encontrada", facultadServicio.buscarPorUuid(uuid)));
     }
 
-    @GetMapping("/por-sede/{sedeId}")
+    @GetMapping("/por-sede/{sedeUuid}")
     public ResponseEntity<RespuestaDto<List<FacultadDto>>> listarPorSede(
-            @PathVariable UUID sedeId) {
-        return ResponseEntity.ok(
-                RespuestaDto.exito("Facultades de la sede obtenidas correctamente",
-                        facultadServicio.listarPorSede(sedeId)));
+            @PathVariable UUID sedeUuid) {
+        return ResponseEntity.ok(RespuestaDto.exito(
+            "Facultades de la sede obtenidas correctamente",
+            facultadServicio.listarPorSede(sedeUuid)));
     }
 }

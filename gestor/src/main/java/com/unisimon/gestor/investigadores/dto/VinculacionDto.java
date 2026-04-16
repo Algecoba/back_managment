@@ -4,18 +4,15 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 /**
- * DTO genérico para representar una vinculación histórica.
- * Usado para programa, centro y grupo — todos comparten
- * la misma estructura de vigencia temporal.
+ * DTO generico para vinculaciones historicas.
+ * entidadId es el id interno Long.
  */
 @Getter
 @Builder
 public class VinculacionDto {
-    private UUID entidadId;
-    private String nombre;
+    private Long entidadId;
     private boolean esPrincipal;
     private LocalDate activoDesde;
     private LocalDate activoHasta;

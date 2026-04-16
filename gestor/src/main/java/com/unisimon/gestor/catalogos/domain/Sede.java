@@ -9,7 +9,7 @@ import java.util.UUID;
 
 /**
  * Tabla: sede
- * Sede institucional. Ejemplo: Barranquilla (BAQ), Cucuta (CUC).
+ * Sede institucional. Ejemplo: Barranquilla (BAQ).
  */
 @Getter
 @Setter
@@ -22,7 +22,8 @@ public class Sede extends EntidadAuditable {
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 
-    @Column(name = "uuid", nullable = false, unique = true, updatable = false, columnDefinition = "UNIQUEIDENTIFIER DEFAULT NEWID()")
+    @Column(name = "uuid", nullable = false, unique = true,
+            updatable = false, columnDefinition = "UNIQUEIDENTIFIER DEFAULT NEWID()")
     private UUID uuid;
 
     @Column(name = "nombre", nullable = false, length = 100)
@@ -33,8 +34,6 @@ public class Sede extends EntidadAuditable {
 
     @PrePersist
     protected void antesDeGuardar() {
-        if (uuid == null) {
-            uuid = UUID.randomUUID();
-        }
+        if (uuid == null) uuid = UUID.randomUUID();
     }
 }

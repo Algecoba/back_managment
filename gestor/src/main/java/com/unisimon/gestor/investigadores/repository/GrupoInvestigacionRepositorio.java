@@ -11,7 +11,4 @@ public interface GrupoInvestigacionRepositorio
         extends JpaRepository<GrupoInvestigacion, Long> {
 
     List<GrupoInvestigacion> findByEsActivoTrue();
-
-    List<GrupoInvestigacion> findByCentroCentroInvestigacionIdAndEsActivoTrue(
-            Long centroId);
 }

@@ -12,8 +12,6 @@ import java.util.UUID;
 /**
  * Tabla: usuario
  * Repositorio central de usuarios del sistema.
- * Integra con Microsoft Identity via ms_subject_id.
- * El correo institucional es el identificador de login.
  */
 @Getter
 @Setter
@@ -26,7 +24,8 @@ public class Usuario extends EntidadAuditable {
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 
-    @Column(name = "uuid", nullable = false, unique = true, updatable = false, columnDefinition = "UNIQUEIDENTIFIER DEFAULT NEWID()")
+    @Column(name = "uuid", nullable = false, unique = true,
+            updatable = false, columnDefinition = "UNIQUEIDENTIFIER DEFAULT NEWID()")
     private UUID uuid;
 
     @Column(name = "ms_tenant_id", length = 100)
@@ -50,7 +49,8 @@ public class Usuario extends EntidadAuditable {
     @Column(name = "apellidos", nullable = false, length = 100)
     private String apellidos;
 
-    @OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER,
+               cascade = CascadeType.PERSIST)
     private List<UsuarioRol> usuarioRoles = new ArrayList<>();
 
     @PrePersist

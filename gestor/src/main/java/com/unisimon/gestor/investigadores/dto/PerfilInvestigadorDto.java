@@ -13,7 +13,7 @@ public class PerfilInvestigadorDto {
     private String nombres;
     private String apellidos;
     private String correo;
-    private UUID sedePredeterminadaId;
+    private Long sedePredeterminadaId;
     private List<VinculacionDto> programas;
     private List<VinculacionDto> centros;
     private List<VinculacionDto> grupos;

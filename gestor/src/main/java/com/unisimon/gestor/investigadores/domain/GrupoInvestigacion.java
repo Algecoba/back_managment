@@ -9,7 +9,6 @@ import java.util.UUID;
 
 /**
  * Tabla: grupo_investigacion
- * Grupo de investigacion. Siempre pertenece a un centro.
  */
 @Getter
 @Setter
@@ -22,7 +21,8 @@ public class GrupoInvestigacion extends EntidadAuditable {
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 
-    @Column(name = "uuid", nullable = false, unique = true, updatable = false, columnDefinition = "UNIQUEIDENTIFIER DEFAULT NEWID()")
+    @Column(name = "uuid", nullable = false, unique = true,
+            updatable = false, columnDefinition = "UNIQUEIDENTIFIER DEFAULT NEWID()")
     private UUID uuid;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -32,14 +32,11 @@ public class GrupoInvestigacion extends EntidadAuditable {
     @Column(name = "nombre", nullable = false, length = 200)
     private String nombre;
 
-    // Correo del lider actual del grupo (nullable)
     @Column(name = "correo_lider", length = 255)
     private String correoLider;
 
     @PrePersist
     protected void antesDeGuardar() {
-        if (uuid == null) {
-            uuid = UUID.randomUUID();
-        }
+        if (uuid == null) uuid = UUID.randomUUID();
     }
 }

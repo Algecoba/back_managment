@@ -11,14 +11,8 @@ import java.util.List;
 
 @Repository
 public interface InvestigadorProgramaRepositorio
-                extends JpaRepository<InvestigadorPrograma, InvestigadorProgramaId> {
+        extends JpaRepository<InvestigadorPrograma, InvestigadorProgramaId> {
 
-        // fecha_fin null = vinculacion vigente actualmente
-        @Query("""
-                        SELECT ip FROM InvestigadorPrograma ip
-                        WHERE ip.id.usuarioId = :usuarioId
-                        AND ip.fechaFin IS NULL
-                        """)
-        List<InvestigadorPrograma> findVigentesByUsuarioId(
-                        @Param("usuarioId") Long usuarioId);
+    @Query("SELECT ip FROM InvestigadorPrograma ip WHERE ip.id.usuarioId = :usuarioId AND ip.fechaFin IS NULL")
+    List<InvestigadorPrograma> findVigentesByUsuarioId(@Param("usuarioId") Long usuarioId);
 }

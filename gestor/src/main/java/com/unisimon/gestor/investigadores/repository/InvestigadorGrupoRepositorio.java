@@ -11,13 +11,8 @@ import java.util.List;
 
 @Repository
 public interface InvestigadorGrupoRepositorio
-                extends JpaRepository<InvestigadorGrupo, InvestigadorGrupoId> {
+        extends JpaRepository<InvestigadorGrupo, InvestigadorGrupoId> {
 
-        @Query("""
-                        SELECT ig FROM InvestigadorGrupo ig
-                        WHERE ig.id.usuarioId = :usuarioId
-                        AND ig.fechaFin IS NULL
-                        """)
-        List<InvestigadorGrupo> findVigentesByUsuarioId(
-                        @Param("usuarioId") Long usuarioId);
+    @Query("SELECT ig FROM InvestigadorGrupo ig WHERE ig.id.usuarioId = :usuarioId AND ig.fechaFin IS NULL")
+    List<InvestigadorGrupo> findVigentesByUsuarioId(@Param("usuarioId") Long usuarioId);
 }

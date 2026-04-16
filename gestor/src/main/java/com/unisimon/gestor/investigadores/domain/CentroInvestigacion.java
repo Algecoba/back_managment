@@ -9,8 +9,6 @@ import java.util.UUID;
 
 /**
  * Tabla: centro_investigacion
- * Centro de investigacion institucional.
- * Agrupa grupos de investigacion.
  */
 @Getter
 @Setter
@@ -23,7 +21,8 @@ public class CentroInvestigacion extends EntidadAuditable {
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 
-    @Column(name = "uuid", nullable = false, unique = true, updatable = false, columnDefinition = "UNIQUEIDENTIFIER DEFAULT NEWID()")
+    @Column(name = "uuid", nullable = false, unique = true,
+            updatable = false, columnDefinition = "UNIQUEIDENTIFIER DEFAULT NEWID()")
     private UUID uuid;
 
     @Column(name = "nombre", nullable = false, unique = true, length = 200)
@@ -35,7 +34,6 @@ public class CentroInvestigacion extends EntidadAuditable {
     @Column(name = "categoria", length = 50)
     private String categoria;
 
-    // Correo del lider actual del centro (nullable)
     @Column(name = "correo_lider", length = 255)
     private String correoLider;
 
@@ -44,8 +42,6 @@ public class CentroInvestigacion extends EntidadAuditable {
 
     @PrePersist
     protected void antesDeGuardar() {
-        if (uuid == null) {
-            uuid = UUID.randomUUID();
-        }
+        if (uuid == null) uuid = UUID.randomUUID();
     }
 }

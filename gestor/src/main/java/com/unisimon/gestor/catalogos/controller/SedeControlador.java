@@ -19,15 +19,13 @@ public class SedeControlador {
 
     @GetMapping
     public ResponseEntity<RespuestaDto<List<SedeDto>>> listar() {
-        return ResponseEntity.ok(
-                RespuestaDto.exito("Sedes obtenidas correctamente",
-                        sedeServicio.listarActivas()));
+        return ResponseEntity.ok(RespuestaDto.exito(
+            "Sedes obtenidas correctamente", sedeServicio.listarActivas()));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<RespuestaDto<SedeDto>> buscarPorId(@PathVariable UUID id) {
-        return ResponseEntity.ok(
-                RespuestaDto.exito("Sede encontrada",
-                        sedeServicio.buscarPorId(id)));
+    @GetMapping("/{uuid}")
+    public ResponseEntity<RespuestaDto<SedeDto>> buscarPorUuid(@PathVariable UUID uuid) {
+        return ResponseEntity.ok(RespuestaDto.exito(
+            "Sede encontrada", sedeServicio.buscarPorUuid(uuid)));
     }
 }

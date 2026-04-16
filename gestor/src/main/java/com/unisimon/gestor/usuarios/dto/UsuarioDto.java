@@ -8,8 +8,7 @@ import java.util.UUID;
 
 /**
  * DTO de salida para el perfil de un usuario.
- * Nunca exponemos la entidad Usuario directamente — este DTO
- * controla exactamente qué campos llegan al frontend.
+ * Expone UUID, nunca el id interno Long.
  */
 @Getter
 @Builder

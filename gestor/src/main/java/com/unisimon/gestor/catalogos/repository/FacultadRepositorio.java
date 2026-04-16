@@ -15,8 +15,6 @@ public interface FacultadRepositorio extends JpaRepository<Facultad, Long> {
 
     Optional<Facultad> findByUuid(UUID uuid);
 
-    // Busca por UUID de la sede padre — Spring Data navega la relacion
-    // automaticamente
     List<Facultad> findBySedeUuidAndEsActivoTrue(UUID sedeUuid);
 
     boolean existsByCodigo(String codigo);

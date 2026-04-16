@@ -8,9 +8,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface RolRepositorio extends JpaRepository<Rol, UUID> {
+public interface RolRepositorio extends JpaRepository<Rol, Long> {
 
     Optional<Rol> findByCodigo(String codigo);
+
+    Optional<Rol> findByUuid(UUID uuid);
 
     boolean existsByCodigo(String codigo);
 }

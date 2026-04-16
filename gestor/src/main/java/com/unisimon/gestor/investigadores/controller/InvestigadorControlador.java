@@ -17,37 +17,25 @@ public class InvestigadorControlador {
 
     private final InvestigadorServicio investigadorServicio;
 
-    /**
-     * GET /api/v1/investigadores/{id}/perfil
-     * Retorna el perfil completo del investigador con sus vinculaciones vigentes.
-     */
-    @GetMapping("/{id}/perfil")
+    @GetMapping("/{uuid}/perfil")
     public ResponseEntity<RespuestaDto<PerfilInvestigadorDto>> obtenerPerfil(
-            @PathVariable UUID id) {
-        return ResponseEntity.ok(
-                RespuestaDto.exito("Perfil del investigador obtenido correctamente",
-                        investigadorServicio.obtenerPerfil(id)));
+            @PathVariable UUID uuid) {
+        return ResponseEntity.ok(RespuestaDto.exito(
+            "Perfil del investigador obtenido correctamente",
+            investigadorServicio.obtenerPerfil(uuid)));
     }
 
-    /**
-     * GET /api/v1/investigadores/centros
-     * Lista todos los centros de investigación activos.
-     */
     @GetMapping("/centros")
     public ResponseEntity<RespuestaDto<List<CentroInvestigacionDto>>> listarCentros() {
-        return ResponseEntity.ok(
-                RespuestaDto.exito("Centros de investigación obtenidos correctamente",
-                        investigadorServicio.listarCentros()));
+        return ResponseEntity.ok(RespuestaDto.exito(
+            "Centros de investigacion obtenidos correctamente",
+            investigadorServicio.listarCentros()));
     }
 
-    /**
-     * GET /api/v1/investigadores/grupos
-     * Lista todos los grupos de investigación activos.
-     */
     @GetMapping("/grupos")
     public ResponseEntity<RespuestaDto<List<GrupoInvestigacionDto>>> listarGrupos() {
-        return ResponseEntity.ok(
-                RespuestaDto.exito("Grupos de investigación obtenidos correctamente",
-                        investigadorServicio.listarGrupos()));
+        return ResponseEntity.ok(RespuestaDto.exito(
+            "Grupos de investigacion obtenidos correctamente",
+            investigadorServicio.listarGrupos()));
     }
 }

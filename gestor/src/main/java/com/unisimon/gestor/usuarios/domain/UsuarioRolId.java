@@ -10,7 +10,6 @@ import java.io.Serializable;
 
 /**
  * Clave primaria compuesta para usuario_rol.
- * Usa Long (id interno) para los joins en BD.
  */
 @Getter
 @Setter

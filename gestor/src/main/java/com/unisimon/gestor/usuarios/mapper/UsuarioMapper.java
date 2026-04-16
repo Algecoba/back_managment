@@ -17,27 +17,27 @@ public class UsuarioMapper {
 
     public UsuarioDto toDto(Usuario usuario) {
         List<RolDto> roles = usuario.getUsuarioRoles().stream()
-                .map(ur -> toRolDto(ur.getRol()))
-                .toList();
+            .map(ur -> toRolDto(ur.getRol()))
+            .toList();
 
         return UsuarioDto.builder()
-                .usuarioId(usuario.getUuid()) // UUID externo, no el id Long
-                .correo(usuario.getCorreo())
-                .nombres(usuario.getNombres())
-                .apellidos(usuario.getApellidos())
-                .tipoDoc(usuario.getTipoDocumento()) // campo renombrado
-                .numDoc(usuario.getNumeroDocumento()) // campo renombrado
-                .activo(usuario.isEsActivo()) // campo renombrado
-                .roles(roles)
-                .build();
+            .usuarioId(usuario.getUuid())
+            .correo(usuario.getCorreo())
+            .nombres(usuario.getNombres())
+            .apellidos(usuario.getApellidos())
+            .tipoDoc(usuario.getTipoDocumento())
+            .numDoc(usuario.getNumeroDocumento())
+            .activo(usuario.isEsActivo())
+            .roles(roles)
+            .build();
     }
 
     public RolDto toRolDto(Rol rol) {
         return RolDto.builder()
-                .rolId(rol.getUuid()) // UUID externo
-                .codigo(rol.getCodigo())
-                .nombre(rol.getNombre())
-                .categoria(rol.getCategoria())
-                .build();
+            .rolId(rol.getUuid())
+            .codigo(rol.getCodigo())
+            .nombre(rol.getNombre())
+            .categoria(rol.getCategoria())
+            .build();
     }
 }

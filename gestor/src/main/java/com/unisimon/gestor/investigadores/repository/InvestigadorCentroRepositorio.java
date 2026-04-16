@@ -11,13 +11,8 @@ import java.util.List;
 
 @Repository
 public interface InvestigadorCentroRepositorio
-                extends JpaRepository<InvestigadorCentro, InvestigadorCentroId> {
+        extends JpaRepository<InvestigadorCentro, InvestigadorCentroId> {
 
-        @Query("""
-                        SELECT ic FROM InvestigadorCentro ic
-                        WHERE ic.id.usuarioId = :usuarioId
-                        AND ic.fechaFin IS NULL
-                        """)
-        List<InvestigadorCentro> findVigentesByUsuarioId(
-                        @Param("usuarioId") Long usuarioId);
+    @Query("SELECT ic FROM InvestigadorCentro ic WHERE ic.id.usuarioId = :usuarioId AND ic.fechaFin IS NULL")
+    List<InvestigadorCentro> findVigentesByUsuarioId(@Param("usuarioId") Long usuarioId);
 }

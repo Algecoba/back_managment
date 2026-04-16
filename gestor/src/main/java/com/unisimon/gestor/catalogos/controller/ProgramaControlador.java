@@ -19,24 +19,21 @@ public class ProgramaControlador {
 
     @GetMapping
     public ResponseEntity<RespuestaDto<List<ProgramaDto>>> listar() {
-        return ResponseEntity.ok(
-                RespuestaDto.exito("Programas obtenidos correctamente",
-                        programaServicio.listarActivos()));
+        return ResponseEntity.ok(RespuestaDto.exito(
+            "Programas obtenidos correctamente", programaServicio.listarActivos()));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<RespuestaDto<ProgramaDto>> buscarPorId(
-            @PathVariable UUID id) {
-        return ResponseEntity.ok(
-                RespuestaDto.exito("Programa encontrado",
-                        programaServicio.buscarPorId(id)));
+    @GetMapping("/{uuid}")
+    public ResponseEntity<RespuestaDto<ProgramaDto>> buscarPorUuid(@PathVariable UUID uuid) {
+        return ResponseEntity.ok(RespuestaDto.exito(
+            "Programa encontrado", programaServicio.buscarPorUuid(uuid)));
     }
 
-    @GetMapping("/por-facultad/{facultadId}")
+    @GetMapping("/por-facultad/{facultadUuid}")
     public ResponseEntity<RespuestaDto<List<ProgramaDto>>> listarPorFacultad(
-            @PathVariable UUID facultadId) {
-        return ResponseEntity.ok(
-                RespuestaDto.exito("Programas de la facultad obtenidos correctamente",
-                        programaServicio.listarPorFacultad(facultadId)));
+            @PathVariable UUID facultadUuid) {
+        return ResponseEntity.ok(RespuestaDto.exito(
+            "Programas de la facultad obtenidos correctamente",
+            programaServicio.listarPorFacultad(facultadUuid)));
     }
 }

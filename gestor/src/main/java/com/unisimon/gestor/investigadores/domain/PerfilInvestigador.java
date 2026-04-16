@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 /**
  * Tabla: perfil_investigador
  * Perfil extendido del investigador — relacion 1:1 con usuario.
- * Usa el mismo id interno del usuario como PK.
  */
 @Getter
 @Setter
@@ -25,7 +24,6 @@ public class PerfilInvestigador {
     @Column(name = "usuario_id", updatable = false, nullable = false)
     private Long usuarioId;
 
-    // UUID de la sede predeterminada del investigador (nullable)
     @Column(name = "sede_predeterminada_id")
     private Long sedePredeterminadaId;
 

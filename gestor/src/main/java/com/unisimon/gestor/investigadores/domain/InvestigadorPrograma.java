@@ -8,8 +8,6 @@ import java.time.LocalDate;
 
 /**
  * Tabla: investigador_programa
- * Vinculacion historica de un investigador a un programa academico.
- * fecha_fin null = vinculacion vigente actualmente.
  */
 @Getter
 @Setter
