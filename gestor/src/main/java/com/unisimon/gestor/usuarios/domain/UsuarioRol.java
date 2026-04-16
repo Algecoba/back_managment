@@ -5,16 +5,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 /**
- * Tabla puente N:M entre usuarios y roles.
- *
- * Registra además quién realizó la asignación del rol y cuándo.
- * No extiende EntidadAuditable porque su estructura de auditoría
- * es distinta: solo tiene asignado_en y asignado_por, sin
- * actualizado_en ni actualizado_por (una asignación no se edita,
- * se elimina y se crea una nueva).
+ * Tabla: usuario_rol
+ * Relacion N:M entre usuario y rol.
+ * Registra quien realizo la asignacion y cuando.
  */
 @Getter
 @Setter
@@ -35,17 +30,17 @@ public class UsuarioRol {
     @JoinColumn(name = "rol_id")
     private Rol rol;
 
-    @Column(name = "asignado_en", nullable = false)
-    private LocalDateTime asignadoEn;
+    @Column(name = "fecha_asignacion", nullable = false)
+    private LocalDateTime fechaAsignacion;
 
-    // UUID del usuario administrador que realizó la asignación
-    @Column(name = "asignado_por", nullable = false)
-    private UUID asignadoPor;
+    // Correo del administrador que realizo la asignacion
+    @Column(name = "usuario_asignacion", nullable = false, length = 100)
+    private String usuarioAsignacion;
 
     @PrePersist
     protected void antesDeGuardar() {
-        if (asignadoEn == null) {
-            asignadoEn = LocalDateTime.now();
+        if (fechaAsignacion == null) {
+            fechaAsignacion = LocalDateTime.now();
         }
     }
 }

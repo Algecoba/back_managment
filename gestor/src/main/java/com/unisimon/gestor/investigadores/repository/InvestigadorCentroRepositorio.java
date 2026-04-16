@@ -8,17 +8,16 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.UUID;
 
 @Repository
 public interface InvestigadorCentroRepositorio
-        extends JpaRepository<InvestigadorCentro, InvestigadorCentroId> {
+                extends JpaRepository<InvestigadorCentro, InvestigadorCentroId> {
 
-    @Query("""
-            SELECT ic FROM InvestigadorCentro ic
-            WHERE ic.id.usuarioId = :usuarioId
-            AND ic.activoHasta IS NULL
-            """)
-    List<InvestigadorCentro> findVigentesByUsuarioId(
-            @Param("usuarioId") UUID usuarioId);
+        @Query("""
+                        SELECT ic FROM InvestigadorCentro ic
+                        WHERE ic.id.usuarioId = :usuarioId
+                        AND ic.fechaFin IS NULL
+                        """)
+        List<InvestigadorCentro> findVigentesByUsuarioId(
+                        @Param("usuarioId") Long usuarioId);
 }

@@ -5,11 +5,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 /**
- * Vinculación histórica de un investigador a un centro de investigación.
- * Misma lógica de vigencia que InvestigadorPrograma.
+ * Tabla: investigador_centro
+ * Vinculacion historica de un investigador a un centro de investigacion.
  */
 @Getter
 @Setter
@@ -23,9 +22,9 @@ public class InvestigadorCentro {
     @Column(name = "es_principal", nullable = false)
     private boolean esPrincipal = false;
 
-    @Column(name = "activo_hasta")
-    private LocalDate activoHasta;
+    @Column(name = "fecha_fin")
+    private LocalDate fechaFin;
 
-    @Column(name = "creado_por")
-    private UUID creadoPor;
+    @Column(name = "usuario_creacion", length = 100)
+    private String usuarioCreacion;
 }

@@ -4,8 +4,8 @@ import com.unisimon.gestor.investigadores.domain.*;
 import com.unisimon.gestor.investigadores.dto.*;
 import com.unisimon.gestor.investigadores.repository.*;
 import com.unisimon.gestor.shared.exception.ExcepcionNoEncontrado;
-import com.unisimon.gestor.usuarios.repository.UsuarioRepositorio;
 import com.unisimon.gestor.usuarios.domain.Usuario;
+import com.unisimon.gestor.usuarios.repository.UsuarioRepositorio;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,108 +14,108 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Servicio del módulo investigadores.
- *
- * Consulta datos de usuarios desde UsuarioRepositorio — esto es
- * una dependencia válida hacia el módulo usuarios porque investigadores
- * depende de usuarios en el grafo de dependencias del sistema.
+ * Servicio del modulo investigadores.
+ * Usa UUID para todas las referencias externas.
+ * Internamente JPA usa Long (id), pero el servicio
+ * siempre recibe y expone UUID al controlador.
  */
 @Service
 @RequiredArgsConstructor
 public class InvestigadorServicio {
 
-    private final UsuarioRepositorio usuarioRepositorio;
-    private final PerfilInvestigadorRepositorio perfilRepositorio;
-    private final CentroInvestigacionRepositorio centroRepositorio;
-    private final GrupoInvestigacionRepositorio grupoRepositorio;
-    private final InvestigadorProgramaRepositorio invProgramaRepositorio;
-    private final InvestigadorCentroRepositorio invCentroRepositorio;
-    private final InvestigadorGrupoRepositorio invGrupoRepositorio;
+        private final UsuarioRepositorio usuarioRepositorio;
+        private final PerfilInvestigadorRepositorio perfilRepositorio;
+        private final CentroInvestigacionRepositorio centroRepositorio;
+        private final GrupoInvestigacionRepositorio grupoRepositorio;
+        private final InvestigadorProgramaRepositorio invProgramaRepositorio;
+        private final InvestigadorCentroRepositorio invCentroRepositorio;
+        private final InvestigadorGrupoRepositorio invGrupoRepositorio;
 
-    @Transactional(readOnly = true)
-    public PerfilInvestigadorDto obtenerPerfil(UUID usuarioId) {
-        Usuario usuario = usuarioRepositorio.findById(usuarioId)
-                .orElseThrow(() -> new ExcepcionNoEncontrado(
-                        "Investigador no encontrado con id: " + usuarioId));
+        @Transactional(readOnly = true)
+        public PerfilInvestigadorDto obtenerPerfil(UUID usuarioUuid) {
+                // Buscamos por UUID externo, JPA usa el id Long internamente
+                Usuario usuario = usuarioRepositorio.findByUuid(usuarioUuid)
+                                .orElseThrow(() -> new ExcepcionNoEncontrado(
+                                                "Investigador no encontrado con uuid: " + usuarioUuid));
 
-        PerfilInvestigador perfil = perfilRepositorio
-                .findById(usuarioId)
-                .orElse(null);
+                PerfilInvestigador perfil = perfilRepositorio
+                                .findById(usuario.getId())
+                                .orElse(null);
 
-        List<VinculacionDto> programas = invProgramaRepositorio
-                .findVigentesByUsuarioId(usuarioId)
-                .stream()
-                .map(ip -> VinculacionDto.builder()
-                        .entidadId(ip.getId().getProgramaId())
-                        .esPrincipal(ip.isEsPrincipal())
-                        .activoDesde(ip.getId().getActivoDesde())
-                        .activoHasta(ip.getActivoHasta())
-                        .vigente(ip.getActivoHasta() == null)
-                        .build())
-                .toList();
+                List<VinculacionDto> programas = invProgramaRepositorio
+                                .findVigentesByUsuarioId(usuario.getId())
+                                .stream()
+                                .map(ip -> VinculacionDto.builder()
+                                                .entidadId(ip.getId().getProgramaId())
+                                                .esPrincipal(ip.isEsPrincipal())
+                                                .activoDesde(ip.getId().getFechaInicio()) // campo renombrado
+                                                .activoHasta(ip.getFechaFin()) // campo renombrado
+                                                .vigente(ip.getFechaFin() == null)
+                                                .build())
+                                .toList();
 
-        List<VinculacionDto> centros = invCentroRepositorio
-                .findVigentesByUsuarioId(usuarioId)
-                .stream()
-                .map(ic -> VinculacionDto.builder()
-                        .entidadId(ic.getId().getCentroId())
-                        .esPrincipal(ic.isEsPrincipal())
-                        .activoDesde(ic.getId().getActivoDesde())
-                        .activoHasta(ic.getActivoHasta())
-                        .vigente(ic.getActivoHasta() == null)
-                        .build())
-                .toList();
+                List<VinculacionDto> centros = invCentroRepositorio
+                                .findVigentesByUsuarioId(usuario.getId())
+                                .stream()
+                                .map(ic -> VinculacionDto.builder()
+                                                .entidadId(ic.getId().getCentroInvestigacionId()) // campo renombrado
+                                                .esPrincipal(ic.isEsPrincipal())
+                                                .activoDesde(ic.getId().getFechaInicio())
+                                                .activoHasta(ic.getFechaFin())
+                                                .vigente(ic.getFechaFin() == null)
+                                                .build())
+                                .toList();
 
-        List<VinculacionDto> grupos = invGrupoRepositorio
-                .findVigentesByUsuarioId(usuarioId)
-                .stream()
-                .map(ig -> VinculacionDto.builder()
-                        .entidadId(ig.getId().getGrupoId())
-                        .esPrincipal(ig.isEsPrincipal())
-                        .activoDesde(ig.getId().getActivoDesde())
-                        .activoHasta(ig.getActivoHasta())
-                        .vigente(ig.getActivoHasta() == null)
-                        .build())
-                .toList();
+                List<VinculacionDto> grupos = invGrupoRepositorio
+                                .findVigentesByUsuarioId(usuario.getId())
+                                .stream()
+                                .map(ig -> VinculacionDto.builder()
+                                                .entidadId(ig.getId().getGrupoInvestigacionId()) // campo renombrado
+                                                .esPrincipal(ig.isEsPrincipal())
+                                                .activoDesde(ig.getId().getFechaInicio())
+                                                .activoHasta(ig.getFechaFin())
+                                                .vigente(ig.getFechaFin() == null)
+                                                .build())
+                                .toList();
 
-        return PerfilInvestigadorDto.builder()
-                .usuarioId(usuario.getUsuarioId())
-                .nombres(usuario.getNombres())
-                .apellidos(usuario.getApellidos())
-                .correo(usuario.getCorreo())
-                .sedePredeterminadaId(perfil != null ? perfil.getSedePredeterminadaId() : null)
-                .programas(programas)
-                .centros(centros)
-                .grupos(grupos)
-                .build();
-    }
+                return PerfilInvestigadorDto.builder()
+                                .usuarioId(usuario.getUuid()) // UUID externo
+                                .nombres(usuario.getNombres())
+                                .apellidos(usuario.getApellidos())
+                                .correo(usuario.getCorreo())
+                                .sedePredeterminadaId(perfil != null ? perfil.getSedePredeterminadaId() : null)
+                                .programas(programas)
+                                .centros(centros)
+                                .grupos(grupos)
+                                .build();
+        }
 
-    @Transactional(readOnly = true)
-    public List<CentroInvestigacionDto> listarCentros() {
-        return centroRepositorio.findByActivoTrue()
-                .stream()
-                .map(c -> CentroInvestigacionDto.builder()
-                        .centroId(c.getCentroId())
-                        .nombre(c.getNombre())
-                        .acronimo(c.getAcronimo())
-                        .categoria(c.getCategoria())
-                        .correoContacto(c.getCorreoContacto())
-                        .activo(c.isActivo())
-                        .build())
-                .toList();
-    }
+        @Transactional(readOnly = true)
+        public List<CentroInvestigacionDto> listarCentros() {
+                return centroRepositorio.findByEsActivoTrue()
+                                .stream()
+                                .map(c -> CentroInvestigacionDto.builder()
+                                                .centroId(c.getUuid()) // UUID externo
+                                                .nombre(c.getNombre())
+                                                .acronimo(c.getAcronimo())
+                                                .categoria(c.getCategoria())
+                                                .correoContacto(c.getCorreoContacto())
+                                                .activo(c.isEsActivo()) // campo renombrado
+                                                .build())
+                                .toList();
+        }
 
-    @Transactional(readOnly = true)
-    public List<GrupoInvestigacionDto> listarGrupos() {
-        return grupoRepositorio.findByActivoTrue()
-                .stream()
-                .map(g -> GrupoInvestigacionDto.builder()
-                        .grupoId(g.getGrupoId())
-                        .nombre(g.getNombre())
-                        .activo(g.isActivo())
-                        .centroId(g.getCentro().getCentroId())
-                        .nombreCentro(g.getCentro().getNombre())
-                        .build())
-                .toList();
-    }
+        @Transactional(readOnly = true)
+        public List<GrupoInvestigacionDto> listarGrupos() {
+                return grupoRepositorio.findByEsActivoTrue()
+                                .stream()
+                                .map(g -> GrupoInvestigacionDto.builder()
+                                                .grupoId(g.getUuid()) // UUID externo
+                                                .nombre(g.getNombre())
+                                                .activo(g.isEsActivo()) // campo renombrado
+                                                .centroId(g.getCentro().getUuid())
+                                                .nombreCentro(g.getCentro().getNombre())
+                                                .build())
+                                .toList();
+        }
 }

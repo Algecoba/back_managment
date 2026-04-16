@@ -10,20 +10,16 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 /**
- * Clase base de auditoría para todas las entidades del sistema.
+ * Clase base de auditoria para todas las entidades del sistema.
  *
- * Cualquier entidad que extienda esta clase hereda automáticamente
- * los cuatro campos de auditoría. Spring Data JPA los rellena solo
- * usando el AuditorAware configurado en AuditoriaConfig.
- *
- * Campos heredados:
- * - creadoEn: timestamp de creación del registro
- * - actualizadoEn: timestamp de última modificación
- * - creadoPor: UUID del usuario que creó el registro
- * - actualizadoPor: UUID del usuario que hizo la última modificación
+ * Cumple el estandar institucional de Gestion y Analitica de Datos v1.1:
+ * - fecha_creacion: timestamp de creacion del registro
+ * - usuario_creacion: usuario que creo el registro (correo institucional)
+ * - fecha_actualizacion: timestamp de ultima modificacion
+ * - usuario_actualizacion: usuario de ultima modificacion
+ * - es_activo: indicador de registro activo (soft delete)
  *
  * @MappedSuperclass indica a JPA que esta clase no tiene tabla propia
  *                   pero sus campos se mapean a la tabla de cada subclase.
@@ -35,20 +31,24 @@ import java.util.UUID;
 public abstract class EntidadAuditable {
 
     @CreatedDate
-    @Column(name = "creado_en", nullable = false, updatable = false)
-    private LocalDateTime creadoEn;
+    @Column(name = "fecha_creacion", nullable = false, updatable = false)
+    private LocalDateTime fechaCreacion;
 
     @LastModifiedDate
-    @Column(name = "actualizado_en", nullable = false)
-    private LocalDateTime actualizadoEn;
+    @Column(name = "fecha_actualizacion")
+    private LocalDateTime fechaActualizacion;
 
-    // UUID del usuario que creó el registro.
-    // updatable = false: una vez creado, no se puede cambiar quién lo creó.
+    // Correo institucional del usuario que creo el registro.
+    // updatable = false: no puede cambiar quien creo el registro.
     @CreatedBy
-    @Column(name = "creado_por", updatable = false)
-    private UUID creadoPor;
+    @Column(name = "usuario_creacion", updatable = false, length = 100)
+    private String usuarioCreacion;
 
     @LastModifiedBy
-    @Column(name = "actualizado_por")
-    private UUID actualizadoPor;
+    @Column(name = "usuario_actualizacion", length = 100)
+    private String usuarioActualizacion;
+
+    // Soft delete — nunca eliminamos registros fisicamente
+    @Column(name = "es_activo", nullable = false)
+    private boolean esActivo = true;
 }

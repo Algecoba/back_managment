@@ -8,8 +8,11 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.UUID;
 
+/**
+ * Clave compuesta: usuario_id + programa_id + fecha_inicio
+ * Permite multiples vigencias del mismo investigador en el mismo programa.
+ */
 @Getter
 @Setter
 @Embeddable
@@ -17,11 +20,11 @@ import java.util.UUID;
 public class InvestigadorProgramaId implements Serializable {
 
     @Column(name = "usuario_id")
-    private UUID usuarioId;
+    private Long usuarioId;
 
     @Column(name = "programa_id")
-    private UUID programaId;
+    private Long programaId;
 
-    @Column(name = "activo_desde")
-    private LocalDate activoDesde;
+    @Column(name = "fecha_inicio")
+    private LocalDate fechaInicio;
 }

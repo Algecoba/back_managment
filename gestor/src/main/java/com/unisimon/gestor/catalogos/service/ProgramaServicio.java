@@ -19,35 +19,35 @@ public class ProgramaServicio {
 
     @Transactional(readOnly = true)
     public List<ProgramaDto> listarActivos() {
-        return programaRepositorio.findByActivoTrue()
+        return programaRepositorio.findByEsActivoTrue()
                 .stream()
                 .map(this::toDto)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public List<ProgramaDto> listarPorFacultad(UUID facultadId) {
-        return programaRepositorio.findByFacultadFacultadIdAndActivoTrue(facultadId)
+    public List<ProgramaDto> listarPorFacultad(UUID facultadUuid) {
+        return programaRepositorio.findByFacultadUuidAndEsActivoTrue(facultadUuid)
                 .stream()
                 .map(this::toDto)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public ProgramaDto buscarPorId(UUID programaId) {
-        Programa programa = programaRepositorio.findById(programaId)
+    public ProgramaDto buscarPorUuid(UUID uuid) {
+        Programa programa = programaRepositorio.findByUuid(uuid)
                 .orElseThrow(() -> new ExcepcionNoEncontrado(
-                        "Programa no encontrado con id: " + programaId));
+                        "Programa no encontrado con uuid: " + uuid));
         return toDto(programa);
     }
 
     private ProgramaDto toDto(Programa programa) {
         return ProgramaDto.builder()
-                .programaId(programa.getProgramaId())
+                .programaId(programa.getUuid())
                 .codigo(programa.getCodigo())
                 .nombre(programa.getNombre())
-                .activo(programa.isActivo())
-                .facultadId(programa.getFacultad().getFacultadId())
+                .activo(programa.isEsActivo())
+                .facultadId(programa.getFacultad().getUuid())
                 .nombreFacultad(programa.getFacultad().getNombre())
                 .build();
     }

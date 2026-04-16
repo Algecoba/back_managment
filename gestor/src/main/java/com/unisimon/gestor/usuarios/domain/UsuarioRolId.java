@@ -7,14 +7,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.UUID;
 
 /**
- * Clave primaria compuesta para la tabla usuario_rol.
- *
- * JPA exige que las claves compuestas sean Serializable e
- * implementen equals() y hashCode() correctamente.
- * Lombok @EqualsAndHashCode se encarga de eso automáticamente.
+ * Clave primaria compuesta para usuario_rol.
+ * Usa Long (id interno) para los joins en BD.
  */
 @Getter
 @Setter
@@ -23,8 +19,8 @@ import java.util.UUID;
 public class UsuarioRolId implements Serializable {
 
     @Column(name = "usuario_id")
-    private UUID usuarioId;
+    private Long usuarioId;
 
     @Column(name = "rol_id")
-    private UUID rolId;
+    private Long rolId;
 }

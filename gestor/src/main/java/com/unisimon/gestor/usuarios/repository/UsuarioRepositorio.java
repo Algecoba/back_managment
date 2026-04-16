@@ -9,38 +9,29 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 import java.util.UUID;
 
-/**
- * Repositorio de usuarios.
- *
- * Spring Data JPA genera la implementación automáticamente.
- * Solo declaramos los métodos que el nombre no puede expresar
- * o que requieren queries optimizadas con JOIN FETCH.
- */
 @Repository
-public interface UsuarioRepositorio extends JpaRepository<Usuario, UUID> {
+public interface UsuarioRepositorio extends JpaRepository<Usuario, Long> {
 
-    // Spring Data deriva el SQL del nombre del método
     Optional<Usuario> findByCorreo(String correo);
+
+    Optional<Usuario> findByUuid(UUID uuid);
 
     Optional<Usuario> findByMsSubjectId(String msSubjectId);
 
     boolean existsByCorreo(String correo);
 
-    boolean existsByNumDoc(String numDoc);
+    boolean existsByNumeroDocumento(String numeroDocumento);
 
     /**
      * Busca usuario por correo cargando sus roles en la misma query.
-     *
-     * Sin JOIN FETCH, Hibernate haría N+1 queries: una para el usuario
-     * y una por cada rol. Con JOIN FETCH todo llega en una sola query.
-     * Crítico para el flujo de autenticación que ocurre en cada request.
+     * Evita el problema N+1 al cargar la coleccion de roles.
      */
     @Query("""
             SELECT u FROM Usuario u
             LEFT JOIN FETCH u.usuarioRoles ur
             LEFT JOIN FETCH ur.rol
             WHERE u.correo = :correo
-            AND u.activo = true
+            AND u.esActivo = true
             """)
     Optional<Usuario> findByCorreoConRoles(@Param("correo") String correo);
 }

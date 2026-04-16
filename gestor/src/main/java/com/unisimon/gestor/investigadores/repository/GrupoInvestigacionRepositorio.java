@@ -5,13 +5,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.UUID;
 
 @Repository
 public interface GrupoInvestigacionRepositorio
-        extends JpaRepository<GrupoInvestigacion, UUID> {
+        extends JpaRepository<GrupoInvestigacion, Long> {
 
-    List<GrupoInvestigacion> findByActivoTrue();
+    List<GrupoInvestigacion> findByEsActivoTrue();
 
-    List<GrupoInvestigacion> findByCentroCentroIdAndActivoTrue(UUID centroId);
+    List<GrupoInvestigacion> findByCentroCentroInvestigacionIdAndEsActivoTrue(
+            Long centroId);
 }

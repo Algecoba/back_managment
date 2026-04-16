@@ -8,7 +8,6 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -17,11 +16,11 @@ import java.util.UUID;
 public class InvestigadorGrupoId implements Serializable {
 
     @Column(name = "usuario_id")
-    private UUID usuarioId;
+    private Long usuarioId;
 
-    @Column(name = "grupo_id")
-    private UUID grupoId;
+    @Column(name = "grupo_investigacion_id")
+    private Long grupoInvestigacionId;
 
-    @Column(name = "activo_desde")
-    private LocalDate activoDesde;
+    @Column(name = "fecha_inicio")
+    private LocalDate fechaInicio;
 }

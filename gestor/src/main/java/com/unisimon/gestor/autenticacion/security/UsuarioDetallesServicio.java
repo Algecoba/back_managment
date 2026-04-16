@@ -16,15 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * Implementación de UserDetailsService que consulta la BD real.
+ * Implementacion de UserDetailsService que consulta la BD real.
  *
- * El sistema productivo usará Microsoft OAuth2 — los usuarios no
- * tienen contraseña almacenada. Para desarrollo, el admin de prueba
- * tiene una contraseña hardcodeada que permite probar el flujo JWT
+ * El sistema productivo usara Microsoft OAuth2 — los usuarios no
+ * tienen contrasena almacenada. Para desarrollo, el admin de prueba
+ * tiene una contrasena hardcodeada que permite probar el flujo JWT
  * completo sin depender de Microsoft Identity.
  *
- * TODO: cuando Microsoft OAuth2 esté activo, eliminar el bloque
- * de desarrollo y este servicio solo validará tokens de Microsoft.
+ * TODO: eliminar bloque de desarrollo cuando Microsoft OAuth2 este activo.
  */
 @Slf4j
 @Service
@@ -42,10 +41,10 @@ public class UsuarioDetallesServicio implements UserDetailsService {
                 log.debug("Cargando usuario por correo: {}", correo);
 
                 // ── Bloque de desarrollo ─────────────────────────────────
-                // Permite hacer login con usuario+contraseña mientras no
-                // existe integración con Microsoft. El usuario debe existir
-                // en BD para que /me retorne datos reales.
-                // TODO: eliminar cuando Microsoft OAuth2 esté implementado.
+                // Permite login con usuario+contrasena mientras no existe
+                // integracion con Microsoft. El usuario debe existir en BD
+                // para que /me retorne datos reales.
+                // TODO: eliminar cuando Microsoft OAuth2 este implementado.
                 if ("admin@unisimon.edu.co".equals(correo)) {
                         return usuarioRepositorio.findByCorreoConRoles(correo)
                                         .map(u -> construirUserDetails(u,
@@ -74,13 +73,12 @@ public class UsuarioDetallesServicio implements UserDetailsService {
                                 .orElseThrow(() -> new UsernameNotFoundException(
                                                 "No existe usuario activo con correo: " + correo));
 
-                // Sin contraseña real — autenticación es por JWT, no por password
                 return construirUserDetails(usuario, "{noop}sin-password");
         }
 
         /**
          * Construye el UserDetails de Spring Security desde nuestra entidad.
-         * Extrae los roles de la tabla usuario_rol para construir authorities.
+         * Usa esActivo (estandar institucional) para bloquear cuentas inactivas.
          */
         private UserDetails construirUserDetails(Usuario usuario, String password) {
                 List<SimpleGrantedAuthority> authorities = usuario.getUsuarioRoles()
@@ -92,8 +90,8 @@ public class UsuarioDetallesServicio implements UserDetailsService {
                                 .username(usuario.getCorreo())
                                 .password(password)
                                 .authorities(authorities)
-                                .accountLocked(!usuario.isActivo())
-                                .disabled(!usuario.isActivo())
+                                .accountLocked(!usuario.isEsActivo()) // campo renombrado
+                                .disabled(!usuario.isEsActivo()) // campo renombrado
                                 .build();
         }
 }

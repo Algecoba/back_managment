@@ -4,35 +4,41 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Optional;
-import java.util.UUID;
 
 /**
- * Configuración de auditoría automática de JPA.
+ * Configuracion de auditoria automatica de JPA.
  *
- * Habilita @CreatedBy, @LastModifiedBy, @CreatedDate y
- * 
- * @LastModifiedDate en las entidades que extiendan una clase
- *                   base de auditoría.
+ * AuditorAware extrae el correo del usuario autenticado desde
+ * el SecurityContext para poblarlo en usuario_creacion y
+ * usuario_actualizacion de cada entidad auditable.
  *
- *                   AuditorAware le dice a Spring quién es el usuario actual.
- *                   Por ahora retorna un UUID de sistema como placeholder.
- *
- *                   CUANDO SE ACTIVE JWT: este bean se actualizará para extraer
- *                   el usuario_id del SecurityContext en lugar del UUID fijo.
+ * Cumple estandar institucional: usuario_creacion varchar(100).
  */
 @Configuration
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
 public class AuditoriaConfig {
 
-    // UUID ficticio que representa al sistema mientras no hay autenticación real.
-    // Se reemplaza por el UUID del usuario autenticado cuando tengamos JWT.
-    private static final UUID SISTEMA_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    private static final String SISTEMA = "sistema";
 
     @Bean
-    public AuditorAware<UUID> auditorAware() {
-        // TODO: reemplazar por extracción del SecurityContext cuando JWT esté activo
-        return () -> Optional.of(SISTEMA_ID);
+    public AuditorAware<String> auditorAware() {
+        return () -> {
+            Authentication auth = SecurityContextHolder
+                    .getContext()
+                    .getAuthentication();
+
+            // Si no hay autenticacion activa usa "sistema" como fallback
+            if (auth == null || !auth.isAuthenticated() ||
+                    auth.getName().equals("anonymousUser")) {
+                return Optional.of(SISTEMA);
+            }
+
+            // El nombre en Spring Security es el correo institucional
+            return Optional.of(auth.getName());
+        };
     }
 }

@@ -19,35 +19,35 @@ public class FacultadServicio {
 
     @Transactional(readOnly = true)
     public List<FacultadDto> listarActivas() {
-        return facultadRepositorio.findByActivoTrue()
+        return facultadRepositorio.findByEsActivoTrue()
                 .stream()
                 .map(this::toDto)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public List<FacultadDto> listarPorSede(UUID sedeId) {
-        return facultadRepositorio.findBySedeSedeIdAndActivoTrue(sedeId)
+    public List<FacultadDto> listarPorSede(UUID sedeUuid) {
+        return facultadRepositorio.findBySedeUuidAndEsActivoTrue(sedeUuid)
                 .stream()
                 .map(this::toDto)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public FacultadDto buscarPorId(UUID facultadId) {
-        Facultad facultad = facultadRepositorio.findById(facultadId)
+    public FacultadDto buscarPorUuid(UUID uuid) {
+        Facultad facultad = facultadRepositorio.findByUuid(uuid)
                 .orElseThrow(() -> new ExcepcionNoEncontrado(
-                        "Facultad no encontrada con id: " + facultadId));
+                        "Facultad no encontrada con uuid: " + uuid));
         return toDto(facultad);
     }
 
     private FacultadDto toDto(Facultad facultad) {
         return FacultadDto.builder()
-                .facultadId(facultad.getFacultadId())
+                .facultadId(facultad.getUuid())
                 .codigo(facultad.getCodigo())
                 .nombre(facultad.getNombre())
-                .activo(facultad.isActivo())
-                .sedeId(facultad.getSede().getSedeId())
+                .activo(facultad.isEsActivo())
+                .sedeId(facultad.getSede().getUuid())
                 .nombreSede(facultad.getSede().getNombre())
                 .build();
     }

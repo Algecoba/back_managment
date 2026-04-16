@@ -8,23 +8,23 @@ import lombok.Setter;
 import java.util.UUID;
 
 /**
- * Facultad institucional.
- * Ejemplo: Ingeniería (ING), Ciencias de la Salud (SALUD).
- *
- * Una facultad pertenece a una sede. Esta relación es importante
- * para el módulo de finanzas: el centro de costo se determina
- * según la facultad y el tipo de solicitud.
+ * Tabla: facultad
+ * Facultad institucional. Ejemplo: Ingenieria (ING).
+ * Pertenece a una sede.
  */
 @Getter
 @Setter
 @Entity
-@Table(name = "facultades")
+@Table(name = "facultad")
 public class Facultad extends EntidadAuditable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "facultad_id", updatable = false, nullable = false)
-    private UUID facultadId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, updatable = false)
+    private Long id;
+
+    @Column(name = "uuid", nullable = false, unique = true, updatable = false, columnDefinition = "UNIQUEIDENTIFIER DEFAULT NEWID()")
+    private UUID uuid;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sede_id", nullable = false)
@@ -36,6 +36,10 @@ public class Facultad extends EntidadAuditable {
     @Column(name = "nombre", nullable = false, length = 150)
     private String nombre;
 
-    @Column(name = "activo", nullable = false)
-    private boolean activo = true;
+    @PrePersist
+    protected void antesDeGuardar() {
+        if (uuid == null) {
+            uuid = UUID.randomUUID();
+        }
+    }
 }

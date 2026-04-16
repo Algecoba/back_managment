@@ -5,16 +5,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 /**
- * Vinculación histórica de un investigador a un programa académico.
- *
- * activo_hasta = null significa que la vinculación está vigente.
- * es_principal indica si es la adscripción primaria del investigador.
- *
- * PK compuesta: (usuario_id, programa_id, activo_desde) —
- * permite múltiples vigencias del mismo investigador en el mismo programa.
+ * Tabla: investigador_programa
+ * Vinculacion historica de un investigador a un programa academico.
+ * fecha_fin null = vinculacion vigente actualmente.
  */
 @Getter
 @Setter
@@ -28,9 +23,9 @@ public class InvestigadorPrograma {
     @Column(name = "es_principal", nullable = false)
     private boolean esPrincipal = false;
 
-    @Column(name = "activo_hasta")
-    private LocalDate activoHasta;
+    @Column(name = "fecha_fin")
+    private LocalDate fechaFin;
 
-    @Column(name = "creado_por")
-    private UUID creadoPor;
+    @Column(name = "usuario_creacion", length = 100)
+    private String usuarioCreacion;
 }

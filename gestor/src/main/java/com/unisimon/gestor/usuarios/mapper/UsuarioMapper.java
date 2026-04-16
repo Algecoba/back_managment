@@ -9,12 +9,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * Mapper manual entre entidades y DTOs del módulo usuarios.
- *
- * Usamos mapeo manual en lugar de MapStruct para tener control
- * explícito sobre qué campos se exponen. Cuando el modelo crezca
- * y el mapeo se vuelva repetitivo, se puede migrar a MapStruct
- * sin cambiar los contratos de los servicios.
+ * Mapper manual entre entidades y DTOs del modulo usuarios.
+ * Expone siempre el UUID al frontend, nunca el id interno numerico.
  */
 @Component
 public class UsuarioMapper {
@@ -25,20 +21,20 @@ public class UsuarioMapper {
                 .toList();
 
         return UsuarioDto.builder()
-                .usuarioId(usuario.getUsuarioId())
+                .usuarioId(usuario.getUuid()) // UUID externo, no el id Long
                 .correo(usuario.getCorreo())
                 .nombres(usuario.getNombres())
                 .apellidos(usuario.getApellidos())
-                .tipoDoc(usuario.getTipoDoc())
-                .numDoc(usuario.getNumDoc())
-                .activo(usuario.isActivo())
+                .tipoDoc(usuario.getTipoDocumento()) // campo renombrado
+                .numDoc(usuario.getNumeroDocumento()) // campo renombrado
+                .activo(usuario.isEsActivo()) // campo renombrado
                 .roles(roles)
                 .build();
     }
 
     public RolDto toRolDto(Rol rol) {
         return RolDto.builder()
-                .rolId(rol.getRolId())
+                .rolId(rol.getUuid()) // UUID externo
                 .codigo(rol.getCodigo())
                 .nombre(rol.getNombre())
                 .categoria(rol.getCategoria())

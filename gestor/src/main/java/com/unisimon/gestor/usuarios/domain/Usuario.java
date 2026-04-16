@@ -10,24 +10,24 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Entidad central de usuarios del sistema.
- *
- * Integra con Microsoft Identity via ms_subject_id (sub claim del token
- * OAuth2/OIDC). El correo institucional es el identificador de login.
- *
- * La relación con roles es N:M a través de UsuarioRol, que además
- * registra quién hizo la asignación y cuándo.
+ * Tabla: usuario
+ * Repositorio central de usuarios del sistema.
+ * Integra con Microsoft Identity via ms_subject_id.
+ * El correo institucional es el identificador de login.
  */
 @Getter
 @Setter
 @Entity
-@Table(name = "usuarios")
+@Table(name = "usuario")
 public class Usuario extends EntidadAuditable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "usuario_id", updatable = false, nullable = false)
-    private UUID usuarioId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, updatable = false)
+    private Long id;
+
+    @Column(name = "uuid", nullable = false, unique = true, updatable = false, columnDefinition = "UNIQUEIDENTIFIER DEFAULT NEWID()")
+    private UUID uuid;
 
     @Column(name = "ms_tenant_id", length = 100)
     private String msTenantId;
@@ -35,15 +35,14 @@ public class Usuario extends EntidadAuditable {
     @Column(name = "ms_subject_id", unique = true, length = 100)
     private String msSubjectId;
 
-    // Correo institucional — usado como username en Spring Security
     @Column(name = "correo", nullable = false, unique = true, length = 255)
     private String correo;
 
-    @Column(name = "tipo_doc", nullable = false, length = 20)
-    private String tipoDoc;
+    @Column(name = "tipo_documento", nullable = false, length = 20)
+    private String tipoDocumento;
 
-    @Column(name = "num_doc", nullable = false, unique = true, length = 50)
-    private String numDoc;
+    @Column(name = "numero_documento", nullable = false, unique = true, length = 50)
+    private String numeroDocumento;
 
     @Column(name = "nombres", nullable = false, length = 100)
     private String nombres;
@@ -51,17 +50,13 @@ public class Usuario extends EntidadAuditable {
     @Column(name = "apellidos", nullable = false, length = 100)
     private String apellidos;
 
-    @Column(name = "activo", nullable = false)
-    private boolean activo = true;
-
-    /**
-     * Relación N:M con roles a través de la tabla puente usuario_rol.
-     * FetchType.EAGER porque Spring Security necesita los roles
-     * en el momento de autenticación, dentro del mismo request.
-     *
-     * CascadeType.ALL no aplica aquí: los roles son catálogos
-     * independientes, no se crean ni eliminan desde el usuario.
-     */
     @OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private List<UsuarioRol> usuarioRoles = new ArrayList<>();
+
+    @PrePersist
+    protected void antesDeGuardar() {
+        if (uuid == null) {
+            uuid = UUID.randomUUID();
+        }
+    }
 }

@@ -5,14 +5,19 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface FacultadRepositorio extends JpaRepository<Facultad, UUID> {
+public interface FacultadRepositorio extends JpaRepository<Facultad, Long> {
 
-    List<Facultad> findByActivoTrue();
+    List<Facultad> findByEsActivoTrue();
 
-    List<Facultad> findBySedeSedeIdAndActivoTrue(UUID sedeId);
+    Optional<Facultad> findByUuid(UUID uuid);
+
+    // Busca por UUID de la sede padre — Spring Data navega la relacion
+    // automaticamente
+    List<Facultad> findBySedeUuidAndEsActivoTrue(UUID sedeUuid);
 
     boolean existsByCodigo(String codigo);
 }

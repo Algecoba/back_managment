@@ -19,26 +19,26 @@ public class SedeServicio {
 
     @Transactional(readOnly = true)
     public List<SedeDto> listarActivas() {
-        return sedeRepositorio.findByActivoTrue()
+        return sedeRepositorio.findByEsActivoTrue()
                 .stream()
                 .map(this::toDto)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public SedeDto buscarPorId(UUID sedeId) {
-        Sede sede = sedeRepositorio.findById(sedeId)
+    public SedeDto buscarPorUuid(UUID uuid) {
+        Sede sede = sedeRepositorio.findByUuid(uuid)
                 .orElseThrow(() -> new ExcepcionNoEncontrado(
-                        "Sede no encontrada con id: " + sedeId));
+                        "Sede no encontrada con uuid: " + uuid));
         return toDto(sede);
     }
 
     private SedeDto toDto(Sede sede) {
         return SedeDto.builder()
-                .sedeId(sede.getSedeId())
+                .sedeId(sede.getUuid()) // exponemos UUID, no el id Long
                 .codigo(sede.getCodigo())
                 .nombre(sede.getNombre())
-                .activo(sede.isActivo())
+                .activo(sede.isEsActivo()) // campo renombrado
                 .build();
     }
 }

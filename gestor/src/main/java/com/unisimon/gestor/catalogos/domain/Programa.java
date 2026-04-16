@@ -8,23 +8,23 @@ import lombok.Setter;
 import java.util.UUID;
 
 /**
- * Programa académico institucional.
- * Ejemplo: Ingeniería de Sistemas, Medicina, Derecho.
- *
- * Un programa pertenece a una facultad. Los investigadores
- * se adscriben a programas con fechas de vigencia en la
- * tabla investigador_programa (módulo investigadores).
+ * Tabla: programa
+ * Programa academico institucional.
+ * Pertenece a una facultad.
  */
 @Getter
 @Setter
 @Entity
-@Table(name = "programas")
+@Table(name = "programa")
 public class Programa extends EntidadAuditable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "programa_id", updatable = false, nullable = false)
-    private UUID programaId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, updatable = false)
+    private Long id;
+
+    @Column(name = "uuid", nullable = false, unique = true, updatable = false, columnDefinition = "UNIQUEIDENTIFIER DEFAULT NEWID()")
+    private UUID uuid;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "facultad_id", nullable = false)
@@ -36,6 +36,10 @@ public class Programa extends EntidadAuditable {
     @Column(name = "nombre", nullable = false, length = 200)
     private String nombre;
 
-    @Column(name = "activo", nullable = false)
-    private boolean activo = true;
+    @PrePersist
+    protected void antesDeGuardar() {
+        if (uuid == null) {
+            uuid = UUID.randomUUID();
+        }
+    }
 }

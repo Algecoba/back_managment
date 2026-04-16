@@ -8,32 +8,38 @@ import lombok.Setter;
 import java.util.UUID;
 
 /**
- * Grupo de investigación.
- *
- * Siempre pertenece a un centro de investigación.
- * El líder del grupo es un usuario del sistema (nullable).
+ * Tabla: grupo_investigacion
+ * Grupo de investigacion. Siempre pertenece a un centro.
  */
 @Getter
 @Setter
 @Entity
-@Table(name = "grupos_investigacion")
+@Table(name = "grupo_investigacion")
 public class GrupoInvestigacion extends EntidadAuditable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "grupo_id", updatable = false, nullable = false)
-    private UUID grupoId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, updatable = false)
+    private Long id;
+
+    @Column(name = "uuid", nullable = false, unique = true, updatable = false, columnDefinition = "UNIQUEIDENTIFIER DEFAULT NEWID()")
+    private UUID uuid;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "centro_id", nullable = false)
+    @JoinColumn(name = "centro_investigacion_id", nullable = false)
     private CentroInvestigacion centro;
 
     @Column(name = "nombre", nullable = false, length = 200)
     private String nombre;
 
-    @Column(name = "lider_usuario_id")
-    private UUID liderUsuarioId;
+    // Correo del lider actual del grupo (nullable)
+    @Column(name = "correo_lider", length = 255)
+    private String correoLider;
 
-    @Column(name = "activo", nullable = false)
-    private boolean activo = true;
+    @PrePersist
+    protected void antesDeGuardar() {
+        if (uuid == null) {
+            uuid = UUID.randomUUID();
+        }
+    }
 }

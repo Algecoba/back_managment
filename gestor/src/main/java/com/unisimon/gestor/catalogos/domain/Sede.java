@@ -8,22 +8,22 @@ import lombok.Setter;
 import java.util.UUID;
 
 /**
- * Sede institucional.
- * Ejemplo: Barranquilla (BAQ), Cúcuta (CUC).
- *
- * Es el nivel más alto de la jerarquía institucional.
- * Las solicitudes siempre están asociadas a una sede.
+ * Tabla: sede
+ * Sede institucional. Ejemplo: Barranquilla (BAQ), Cucuta (CUC).
  */
 @Getter
 @Setter
 @Entity
-@Table(name = "sedes")
+@Table(name = "sede")
 public class Sede extends EntidadAuditable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "sede_id", updatable = false, nullable = false)
-    private UUID sedeId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, updatable = false)
+    private Long id;
+
+    @Column(name = "uuid", nullable = false, unique = true, updatable = false, columnDefinition = "UNIQUEIDENTIFIER DEFAULT NEWID()")
+    private UUID uuid;
 
     @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
@@ -31,6 +31,10 @@ public class Sede extends EntidadAuditable {
     @Column(name = "codigo", nullable = false, unique = true, length = 20)
     private String codigo;
 
-    @Column(name = "activo", nullable = false)
-    private boolean activo = true;
+    @PrePersist
+    protected void antesDeGuardar() {
+        if (uuid == null) {
+            uuid = UUID.randomUUID();
+        }
+    }
 }

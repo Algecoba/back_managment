@@ -8,25 +8,28 @@ import lombok.Setter;
 import java.util.UUID;
 
 /**
- * Catálogo de roles del sistema.
- *
- * Un rol tiene una categoría: INVESTIGADOR o ADMINISTRADOR.
- * Regla de negocio: un usuario puede tener máximo 1 rol de
- * categoría ADMINISTRADOR. Esta restricción se valida en
- * UsuarioServicio, no en base de datos, para dar mensajes claros.
+ * Tabla: rol
+ * Catalogo de roles del sistema.
+ * Un rol tiene una categoria: INVESTIGADOR o ADMINISTRADOR.
+ * Regla de negocio: un usuario puede tener maximo 1 rol de
+ * categoria ADMINISTRADOR.
  */
 @Getter
 @Setter
 @Entity
-@Table(name = "roles")
+@Table(name = "rol")
 public class Rol extends EntidadAuditable {
 
+    // PK interna — solo para uso de JPA y joins en BD
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "rol_id", updatable = false, nullable = false)
-    private UUID rolId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, updatable = false)
+    private Long id;
 
-    // Código único legible: INVESTIGADOR, PROF_PUBLICACIONES, etc.
+    // Identificador externo — usado en endpoints REST y JWT
+    @Column(name = "uuid", nullable = false, unique = true, updatable = false, columnDefinition = "UNIQUEIDENTIFIER DEFAULT NEWID()")
+    private UUID uuid;
+
     @Column(name = "codigo", nullable = false, unique = true, length = 50)
     private String codigo;
 
@@ -37,6 +40,10 @@ public class Rol extends EntidadAuditable {
     @Column(name = "categoria", nullable = false, length = 20)
     private String categoria;
 
-    @Column(name = "activo", nullable = false)
-    private boolean activo = true;
+    @PrePersist
+    protected void antesDeGuardar() {
+        if (uuid == null) {
+            uuid = UUID.randomUUID();
+        }
+    }
 }
